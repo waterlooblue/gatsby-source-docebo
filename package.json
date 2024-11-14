@@ -1,7 +1,7 @@
 {
   "name": "gatsby-source-docebo",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "Gatsby source plugin for building websites using Docebo as a data source",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,5 +12,10 @@
     "axios": "^1.7.7",
     "crypto": "^1.0.1",
     "lodash": "^4.17.21"
-  }
+  },
+  "keywords": [
+    "gatsby",
+    "gatsby-plugin",
+    "gatsby-source-plugin"
+  ]
 }
