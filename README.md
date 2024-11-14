@@ -127,4 +127,4 @@ export default Course
 
 ## How to contribute
 
-If you have unanswered questions, would like help with enhancing or debugging the plugin, it is nice to include instructions for people who want to contribute to your plugin.
+If you have any questions or would like to contribue. You can contact me at christopher.norkett@gmail.com
