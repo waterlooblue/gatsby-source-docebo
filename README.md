@@ -9,6 +9,7 @@ npm install gatsby-source-docebo
 
 ## How to query
 
+gatsby-config.js
 ```js:title=gatsby-config.js
 module.exports = {
   plugins: [
@@ -27,6 +28,7 @@ module.exports = {
 }
 ```
 
+gatsby-node.js
 ```js:title=gatsby-node.js
 const path = require('path');
 
@@ -74,6 +76,7 @@ exports.createPages = async ({ graphql, actions }) => {
 }
 ```
 
+course.js (Template)
 ```js:title=course.js
 import React from 'react';
 import { graphql } from 'gatsby';
