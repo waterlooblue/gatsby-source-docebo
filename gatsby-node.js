@@ -33,10 +33,10 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
     while (keepGoing) {
       const { data } = await getCatalogById(id, page);
       
-      records = [...records, ...data.data.items];
-      page = data.data.current_page + 1;
+      records = [...records, ...data.items];
+      page = data.current_page + 1;
       
-      if (!data.data.has_more_data) {
+      if (!data.has_more_data) {
         keepGoing = false;
         reporter.info(`Docebo: Retreived ${records.length} records for catalog id: ${id}`);
         activity.end()
