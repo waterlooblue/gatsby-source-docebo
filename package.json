@@ -1,6 +1,6 @@
 {
   "name": "gatsby-source-docebo",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Gatsby source plugin for building websites using Docebo as a data source",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,6 @@
   "author": "Christopher Norkett <christopher.norkett@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.7.7",
     "crypto": "^1.0.1",
     "lodash": "^4.17.21"
   },

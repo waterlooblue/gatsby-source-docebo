@@ -1,4 +1,3 @@
-const axios = require('axios');
 const crypto = require('crypto');
 const _ = require('lodash');
 
@@ -7,11 +6,21 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
   const { createNode } = actions;
 
   // Get courses by catalog id
-  const getCatalogById = (id, page) => {
-    return axios({
-      method: 'GET',
-      url: `${baseUrl}/learn/v1/catalog/${id}?page=${page}`
-    })
+  const getCatalogById = async (id, page) => {
+    try {
+      const response = await fetch(
+        `${baseUrl}/learn/v1/catalog/${id}?page=${page}`
+      );
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const getCoursesByCatalogId = async (id) => {
@@ -48,13 +57,18 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
   const courses = await Promise.all(
     combinedCatalogs.map(async ({ item_id }) => {
       try {
-        const res = await axios({
-          method: 'GET',
-          url: `${baseUrl}/learn/v1/courses/${item_id}`,
-        });
-        return res?.data?.data;
+        const response = await fetch(
+          `${baseUrl}/learn/v1/courses/${item_id}`
+        );
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        return data?.data;
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     })
   );
@@ -63,14 +77,19 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
   const relatedCourses = await Promise.all(
     combinedCatalogs.map(async ({ item_id }) => {
       try {
-        const res = await axios({
-          method: 'GET',
-          url: `${baseUrl}/learn/v1/courses/${item_id}/by_category?page_size=${relatedLinks}`,
-        });
+        const response = await fetch(
+          `${baseUrl}/learn/v1/courses/${item_id}/by_category?page_size=${relatedLinks}`
+        );
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
+        const res = await response.json();
         let items = [];
-        res.data.data.items.forEach(item => {
-          const course = courses.find( x => x.id == item.id_course);
-          return items.push({slug: course.slug_name, ...item})
+        res.data.items.forEach(item => {
+          const course = courses.find(x => x.id == item.id_course);
+          items.push({ slug: course.slug_name, ...item });
         });
         return { id: item_id, items: items };
       } catch (err) {
@@ -84,7 +103,7 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
   const activity = reporter.activityTimer(`Docebo: Course nodes created`);
   activity.start();
   courses.map(course => {
-    const related = relatedCourses.find(x => x.id == course.id);
+    const related = relatedCourses.find(x => x?.id == course?.id);
     // Create your node object
     const courseNode = {
       // Required fields
@@ -93,11 +112,11 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
       internal: {
         type: `CoursePages`
       },
-      slug: course.slug_name,
-      img: course.thumbnail,
-      uidCourse: course.uidCourse,
-      name: course.name,
-      description: course.description,
+      slug: course?.slug_name,
+      img: course?.thumbnail,
+      uidCourse: course?.uidCourse,
+      name: course?.name,
+      description: course?.description,
       duration: course.duration,
       credits: course.credits,
       additionalFields: course.additional_fields,
@@ -134,10 +153,9 @@ exports.pluginOptionsSchema = ({ Joi }) => {
     catalogId: Joi.array()
   }).external(async pluginOptions => {
     try {
-      await axios({
-        method: 'GET',
-        url: `${pluginOptions.baseUrl}/learn/v1/courses`
-      });
+      await fetch(
+        `${pluginOptions.baseUrl}/learn/v1/courses`
+      );
     } catch (err) {
       throw new Error(
         // `Cannot access Docebo with the provided url "${pluginOptions.baseUrl}". Double check it is correct and try again`
