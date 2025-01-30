@@ -1,6 +1,6 @@
 {
   "name": "gatsby-source-docebo",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Gatsby source plugin for building websites using Docebo as a data source",
   "main": "index.js",
   "scripts": {
