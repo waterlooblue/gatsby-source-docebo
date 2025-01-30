@@ -107,7 +107,7 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
     // Create your node object
     const courseNode = {
       // Required fields
-      id: `${course.id}`,
+      id: `${course?.id}`,
       parent: `__SOURCE__`,
       internal: {
         type: `CoursePages`
@@ -117,11 +117,11 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
       uidCourse: course?.uidCourse,
       name: course?.name,
       description: course?.description,
-      duration: course.duration,
-      credits: course.credits,
-      additionalFields: course.additional_fields,
-      tree: course.tree,
-      relatedCourses: related.items
+      duration: course?.duration,
+      credits: course?.credits,
+      additionalFields: course?.additional_fields,
+      tree: course?.tree,
+      relatedCourses: related?.items
     }
 
     // Get content digest of node. (Required field)
