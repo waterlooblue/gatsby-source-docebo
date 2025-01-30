@@ -1,6 +1,25 @@
 const crypto = require('crypto');
 const _ = require('lodash');
 
+const fetchWithRetry = async (url, retries = 3, delay = 5000) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetchWithRetry(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        },
+        redirect: 'follow', // Ensure redirects are followed
+      });
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      return await response.json();
+    } catch (err) {
+      console.warn(`Fetch attempt ${i + 1} failed:`, err.message);
+      if (i < retries - 1) await new Promise(res => setTimeout(res, delay));
+    }
+  }
+  throw new Error(`Fetch failed after ${retries} attempts`);
+};
+
 // Create a custom content type from Docebo API
 exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relatedLinks }) => {
   const { createNode } = actions;
@@ -8,7 +27,7 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
   // Get courses by catalog id
   const getCatalogById = async (id, page) => {
     try {
-      const response = await fetch(
+      const response = await fetchWithRetry(
         `${baseUrl}/learn/v1/catalog/${id}?page=${page}`
       );
   
@@ -57,9 +76,12 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
   const courses = await Promise.all(
     combinedCatalogs.map(async ({ item_id }) => {
       try {
-        const response = await fetch(
-          `${baseUrl}/learn/v1/courses/${item_id}`
-        );
+        const response = await fetchWithRetry(`${baseUrl}/learn/v1/courses/${item_id}`, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          },
+          redirect: 'follow', // Ensure redirects are followed
+        });
   
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -77,7 +99,7 @@ exports.sourceNodes = async ({ actions, reporter }, { baseUrl, catalogId, relate
   const relatedCourses = await Promise.all(
     combinedCatalogs.map(async ({ item_id }) => {
       try {
-        const response = await fetch(
+        const response = await fetchWithRetry(
           `${baseUrl}/learn/v1/courses/${item_id}/by_category?page_size=${relatedLinks}`
         );
   
@@ -153,7 +175,7 @@ exports.pluginOptionsSchema = ({ Joi }) => {
     catalogId: Joi.array()
   }).external(async pluginOptions => {
     try {
-      await fetch(
+      await fetchWithRetry(
         `${pluginOptions.baseUrl}/learn/v1/courses`
       );
     } catch (err) {
