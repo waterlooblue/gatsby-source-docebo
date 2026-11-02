@@ -2,15 +2,29 @@
   "name": "gatsby-source-docebo",
   "version": "1.0.7",
   "description": "Gatsby source plugin for building websites using Docebo as a data source",
-  "main": "index.js",
+  "main": "gatsby-node.js",
+  "types": "dist/gatsby-node.d.ts",
+  "files": [
+    "gatsby-node.js",
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "prepare": "npm run build"
   },
   "author": "Christopher Norkett <christopher.norkett@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "crypto": "^1.0.1",
-    "lodash": "^4.17.21"
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependencies": {
+    "gatsby": "^4.0.0 || ^5.0.0"
+  },
+  "devDependencies": {
+    "gatsby": "^5.16.1",
+    "typescript": "^5.9.3"
   },
   "keywords": [
     "gatsby",

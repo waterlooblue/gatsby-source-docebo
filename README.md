@@ -125,6 +125,21 @@ export default Course
 
 ```
 
+## TypeScript
+
+The plugin is written in TypeScript (`src/gatsby-node.ts`) and compiled to `dist/`. Plugin option and Docebo response types are exported, e.g.:
+
+```ts
+import type { DoceboPluginOptions } from 'gatsby-source-docebo/dist/gatsby-node';
+```
+
+To develop locally:
+
+```shell
+npm install
+npm run build   # or: npm run watch
+```
+
 ## How to contribute
 
 If you have any questions or would like to contribue. You can contact me at christopher.norkett@gmail.com
